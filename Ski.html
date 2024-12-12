@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utah Has Powder</title>
+    <style>
+        /* Styling for the website */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000; /* Black */
+            color: #ffffff; /* White */
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        .navbar {
+            background-color: #7FDBFF; /* Baby Blue */
+            padding: 10px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar a {
+            color: #ffffff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            color: #000000; /* Black on hover */
+        }
+        .hero {
+            background-image: url('https://www.explore.com/img/gallery/why-sundance-is-the-perfect-time-to-hit-utahs-ski-slopes/l-intro-1675803164.jpg');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            padding: 100px 0;
+        }
+        .hero h1 {
+            font-size: 4em;
+            font-weight: bold;
+            color: #ffffff; /* White text */
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6);
+            letter-spacing: 2px;
+            line-height: 1.3;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .tab {
+            background-color: #7FDBFF; /* Baby Blue */
+            color: #ffffff;
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 5px;
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .tab img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 5px;
+        }
+        .tab:hover {
+            background-color: #333333;
+        }
+        .tab-content {
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #333333;
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .resort-title {
+            color: #7FDBFF;
+            font-size: 2.5em;
+            text-align: center;
+        }
+        .slogan {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .description {
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .snow-data {
+            font-size: 1.2em;
+            color: #7FDBFF;
+            text-align: center;
+        }
+
+        iframe {
+            display: block;
+            margin: 20px auto;
+            border: none;
+            width: 560px;
+            height: 315px;
+        }
+
+        /* Snow animation */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1; /* Ensures snow appears below other content */
+        }
+    </style>
+    <script>
+        function showContent(resort) {
+            // Hide all tab content
+            var contents = document.querySelectorAll('.tab-content');
+            contents.forEach(function(content) {
+                content.classList.remove('active');
+            });
+
+            // Show the clicked tab content
+            document.getElementById(resort).classList.add('active');
+        }
+
+        // Snow animation script
+        window.onload = function() {
+            var canvas = document.createElement("canvas");
+            document.body.appendChild(canvas);
+            var ctx = canvas.getContext("2d");
+
+            var particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function Snowflake(x, y, speed, radius) {
+                this.x = x;
+                this.y = y;
+                this.speed = speed;
+                this.radius = radius;
+
+                this.update = function() {
+                    this.y += this.speed;
+                    if (this.y > canvas.height) {
+                        this.y = -this.radius;
+                        this.x = Math.random() * canvas.width;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = "white";
+                    ctx.fill();
+                };
+            }
+
+            function createSnowflakes() {
+                for (var i = 0; i < 200; i++) {  // Increased number of particles
+                    particles.push(new Snowflake(Math.random() * canvas.width, Math.random() * canvas.height, 1 + Math.random() * 3, 2 + Math.random() * 3));
+                }
+            }
+
+            function animateSnow() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (var i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                }
+                requestAnimationFrame(animateSnow);
+            }
+
+            window.onresize = resizeCanvas;
+            resizeCanvas();
+            createSnowflakes();
+            animateSnow();
+        };
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#home">Home</a>
+        <a href="#resorts">Resorts</a>
+        <a href="skigame.html" target="_blank">Ski Game</a>
+        <a href="MY_Real_Resume.HTML" target="_blank">My Resume</a>
+    </div>
+
+    <div class="hero">
+        <h1>Ski Utah: Shred the Best Snow on Earth</h1>
+    </div>
+
+    <!-- Embedded YouTube Video -->
+    <iframe src="https://www.youtube.com/embed/Y-Hg9an9si8" allowfullscreen></iframe>
+
+    <!-- Resort Tabs -->
+    <div class="tabs">
+        <div class="tab" onclick="showContent('brighton')">
+            <img src="https://cdn1.snowpak.com/resorts/logos/000/000/172/original/brighton-resort.png?1524458651" alt="Brighton Resort">
+            Brighton
+        </div>
+        <div class="tab" onclick="showContent('snowbird')">
+            <img src="https://www.liblogo.com/img-logo/sn7438sc2b-snowbird-logo-snowbird-season-passes.png " alt="Snowbird Resort">
+            Snowbird
+        </div>
+        <div class="tab" onclick="showContent('alta')">
+            <img src="https://www.go-utah.com/media/photos/AltaSkiArea-results_6089_47487.jpg" alt="Alta Resort">
+            Alta
+        </div>
+        <div class="tab" onclick="showContent('solitude')">
+            <img src="https://usskiandsnowboard.org/sites/default/files/partner-logos/2018-04/Solitude--Resort--Logo.png " alt="Solitude Resort">
+            Solitude
+        </div>
+        <div class="tab" onclick="showContent('deervalley')">
+            <img src="https://logovector.net/wp-content/uploads/2013/05/12495-deer-valley-logo.gif " alt="Deer Valley Resort">
+            Deer Valley
+        </div>
+    </div>
+
+    <!-- Resort Content -->
+    <div id="brighton" class="tab-content active">
+        <h2 class="resort-title">Brighton</h2>
+        <p class="slogan">Big, Bold & Bright</p>
+        <p class="description">Brighton is Utah's only resort that can boast that 100% of its terrain is accessible by high-speed quads, allowing guests to experience all of its incredible Utah skiing.</p>
+        <p class="snow-data">Base Depth: 23 inches</p>
+        <p class="snow-data">New Snow (24hrs): 0 inches</p>
+    </div>
+
+    <div id="snowbird" class="tab-content">
+        <h2 class="resort-title">Snowbird</h2>
+        <p class="slogan">The Greatest Snow on Earth</p>
+        <p class="description">Snowbird is famous for its steep slopes, deep powder, and incredible views, offering something for both expert and beginner skiers.</p>
+        <p class="snow-data">Base Depth: 36 inches</p>
+        <p class="snow-data">New Snow (24hrs): 6 inches</p>
+    </div>
+
+    <div id="alta" class="tab-content">
+        <h2 class="resort-title">Alta</h2>
+        <p class="slogan">Utah’s Best Powder</p>
+        <p class="description">Alta is a skier’s paradise with some of the most pristine powder in the world.</p>
+        <p class="snow-data">Base Depth: 45 inches</p>
+        <p class="snow-data">New Snow (24hrs): 12 inches</p>
+    </div>
+
+    <div id="solitude" class="tab-content">
+        <h2 class="resort-title">Solitude</h2>
+        <p class="slogan">Solitude in the Mountains</p>
+        <p class="description">Perfect for families and those looking for a quiet escape, Solitude has some of the best tree skiing in Utah.</p>
+        <p class="snow-data">Base Depth: 28 inches</p>
+        <p class="snow-data">New Snow (24hrs): 4 inches</p>
+    </div>
+
+    <div id="deervalley" class="tab-content">
+        <h2 class="resort-title">Deer Valley</h2>
+        <p class="slogan">Luxury Meets Powder</p>
+        <p class="description">Deer Valley offers an unparalleled experience with perfectly groomed runs, luxurious amenities, and top-notch service.</p>
+        <p class="snow-data">Base Depth: 30 inches</p>
+        <p class="snow-data">New Snow (24hrs): 2 inches</p>
+    </div>
+</body>
+</html>

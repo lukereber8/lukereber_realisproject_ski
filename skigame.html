@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skier Game</title>
+    <style>
+        /* Basic page styling */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        /* Background styling */
+        #gameArea {
+            background-image: url('https://wallpaperaccess.com/full/5947059.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            height: 100vh;
+        }
+
+        /* Skier and tree styling */
+        .skiing {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url('https://th.bing.com/th/id/OIP.F7ejDpVOLUAeY1xy1kHW3QHaJr?rs=1&pid=ImgDetMain');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .tree {
+            position: absolute;
+            width: 50px;
+            height: 100px;
+            background-image: url('https://th.bing.com/th/id/OIP.WmLln0ie2NoToEw725ji_gAAAA?rs=1&pid=ImgDetMain');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Game Over screen */
+        .gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        /* Controls the ski game */
+        #instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 1.2em;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+        }
+
+        /* Button styling */
+        #backButton {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #backButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Game area -->
+    <div id="gameArea">
+        <!-- Instructions -->
+        <div id="instructions">Use arrow keys to move the skier. Avoid the trees!</div>
+
+        <!-- Skier and Trees will be dynamically added here -->
+        <div id="gameContainer"></div>
+
+        <!-- Game Over text -->
+        <div class="gameOver" id="gameOverText">Game Over! Press R to Restart</div>
+
+        <!-- Back to Projects Button -->
+        <!-- Back to Projects Button -->
+<a href="Ski.html">
+    <button id="backButton">Back to Ski Project</button>
+</a>
+
+
+    <script>
+        // Game variables
+        let skier;
+        let trees = [];
+        let gameInterval;
+        let skierSpeed = 20; // Increased skier speed
+        let treeSpeed = 5; // Adjust tree speed slightly
+        let gameStarted = false;
+
+        // Create skier
+        function createSkier() {
+            skier = document.createElement('div');
+            skier.classList.add('skiing');
+            skier.style.left = '50px';
+            skier.style.top = '50px';
+            document.getElementById('gameContainer').appendChild(skier);
+        }
+
+        // Start game
+        function startGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            document.getElementById('gameOverText').style.display = 'none';
+            createSkier();
+            trees = [];
+            gameInterval = setInterval(gameLoop, 20);
+        }
+
+        // Move skier with arrow keys
+        document.addEventListener('keydown', function (event) {
+            const skierPosition = skier.getBoundingClientRect();
+            const gameArea = document.getElementById('gameArea').getBoundingClientRect();
+
+            if (event.key === 'ArrowUp' && skierPosition.top > gameArea.top) {
+                skier.style.top = skierPosition.top - skierSpeed + 'px';
+            }
+            if (event.key === 'ArrowDown' && skierPosition.bottom < gameArea.bottom) {
+                skier.style.top = skierPosition.top + skierSpeed + 'px';
+            }
+            if (event.key === 'ArrowLeft' && skierPosition.left > gameArea.left) {
+                skier.style.left = skierPosition.left - skierSpeed + 'px';
+            }
+            if (event.key === 'ArrowRight' && skierPosition.right < gameArea.right) {
+                skier.style.left = skierPosition.left + skierSpeed + 'px';
+            }
+        });
+
+        // Spawn trees at random positions
+        function spawnTree() {
+            const tree = document.createElement('div');
+            tree.classList.add('tree');
+            tree.style.left = window.innerWidth + 'px';
+            tree.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+            document.getElementById('gameContainer').appendChild(tree);
+            trees.push(tree);
+        }
+
+        // Game loop
+        function gameLoop() {
+            // Move trees down the screen
+            trees.forEach((tree, index) => {
+                const treePosition = tree.getBoundingClientRect();
+                tree.style.left = treePosition.left - treeSpeed + 'px';
+                if (treePosition.right < 0) {
+                    tree.remove();
+                    trees.splice(index, 1);
+                }
+                if (checkCollision(skier, tree)) {
+                    endGame();
+                }
+            });
+
+            // Randomly spawn trees
+            if (Math.random() < 0.02) {
+                spawnTree();
+            }
+        }
+
+        // Check for collision between skier and tree
+        function checkCollision(skier, tree) {
+            const skierRect = skier.getBoundingClientRect();
+            const treeRect = tree.getBoundingClientRect();
+            return !(skierRect.right < treeRect.left ||
+                skierRect.left > treeRect.right ||
+                skierRect.bottom < treeRect.top ||
+                skierRect.top > treeRect.bottom);
+        }
+
+        // End game
+        function endGame() {
+            clearInterval(gameInterval);
+            document.getElementById('gameOverText').style.display = 'block';
+            gameStarted = false;
+        }
+
+        // Restart the game
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'r' || event.key === 'R') {
+                resetGame();
+            }
+        });
+
+        // Reset game function
+        function resetGame() {
+            document.getElementById('gameContainer').innerHTML = ''; // Clear the game container
+            startGame(); // Restart the game
+        }
+
+        // Start the game when the page loads
+        window.onload = startGame;
+    </script>
+</body>
+</html>
